@@ -260,29 +260,33 @@ class Serial_Validator_Settings {
      * Save settings.
      */
     private function save_settings() {
+        // Nonce is verified by check_admin_referer() in the caller before this method is invoked.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        $sv_raw = wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $settings = array(
-            'form_enable_name' => isset($_POST['form_enable_name']),
-            'form_enable_email' => isset($_POST['form_enable_email']),
-            'form_enable_phone' => isset($_POST['form_enable_phone']),
-            'enable_one_time_use' => isset($_POST['enable_one_time_use']),
-            'allow_reverification' => isset($_POST['allow_reverification']),
-            'rate_limit_enabled' => isset($_POST['rate_limit_enabled']),
-            'rate_limit_attempts' => isset($_POST['rate_limit_attempts']) ? intval($_POST['rate_limit_attempts']) : 5,
-            'rate_limit_duration' => 3600,
-            'recaptcha_enabled' => isset($_POST['recaptcha_enabled']),
-            'recaptcha_site_key' => sanitize_text_field($_POST['recaptcha_site_key'] ?? ''),
-            'recaptcha_secret_key' => sanitize_text_field($_POST['recaptcha_secret_key'] ?? ''),
-            'lead_creation_rule' => sanitize_text_field($_POST['lead_creation_rule'] ?? 'valid_only'),
-            'lead_require_name' => isset($_POST['lead_require_name']),
-            'lead_require_email' => isset($_POST['lead_require_email']),
-            'lead_require_phone' => isset($_POST['lead_require_phone']),
-            'message_valid' => sanitize_textarea_field($_POST['message_valid'] ?? ''),
-            'message_invalid' => sanitize_textarea_field($_POST['message_invalid'] ?? ''),
-            'message_used' => sanitize_textarea_field($_POST['message_used'] ?? ''),
-            'message_blocked' => sanitize_textarea_field($_POST['message_blocked'] ?? ''),
-            'message_rate_limit' => sanitize_textarea_field($_POST['message_rate_limit'] ?? ''),
+            'form_enable_name'      => isset( $sv_raw['form_enable_name'] ),
+            'form_enable_email'     => isset( $sv_raw['form_enable_email'] ),
+            'form_enable_phone'     => isset( $sv_raw['form_enable_phone'] ),
+            'enable_one_time_use'   => isset( $sv_raw['enable_one_time_use'] ),
+            'allow_reverification'  => isset( $sv_raw['allow_reverification'] ),
+            'rate_limit_enabled'    => isset( $sv_raw['rate_limit_enabled'] ),
+            'rate_limit_attempts'   => isset( $sv_raw['rate_limit_attempts'] ) ? intval( $sv_raw['rate_limit_attempts'] ) : 5,
+            'rate_limit_duration'   => 3600,
+            'recaptcha_enabled'     => isset( $sv_raw['recaptcha_enabled'] ),
+            'recaptcha_site_key'    => sanitize_text_field( $sv_raw['recaptcha_site_key'] ?? '' ),
+            'recaptcha_secret_key'  => sanitize_text_field( $sv_raw['recaptcha_secret_key'] ?? '' ),
+            'lead_creation_rule'    => sanitize_text_field( $sv_raw['lead_creation_rule'] ?? 'valid_only' ),
+            'lead_require_name'     => isset( $sv_raw['lead_require_name'] ),
+            'lead_require_email'    => isset( $sv_raw['lead_require_email'] ),
+            'lead_require_phone'    => isset( $sv_raw['lead_require_phone'] ),
+            'message_valid'         => sanitize_textarea_field( $sv_raw['message_valid'] ?? '' ),
+            'message_invalid'       => sanitize_textarea_field( $sv_raw['message_invalid'] ?? '' ),
+            'message_used'          => sanitize_textarea_field( $sv_raw['message_used'] ?? '' ),
+            'message_blocked'       => sanitize_textarea_field( $sv_raw['message_blocked'] ?? '' ),
+            'message_rate_limit'    => sanitize_textarea_field( $sv_raw['message_rate_limit'] ?? '' ),
         );
-        
-        update_option($this->option_name, $settings);
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
+        update_option( $this->option_name, $settings );
     }
 }

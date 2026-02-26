@@ -4,6 +4,7 @@
  *
  * @package Serial_Validator
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- view partial, variables are local scope
 
 // Prevent direct access
 if (!defined('WPINC')) {

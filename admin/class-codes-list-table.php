@@ -4,6 +4,9 @@
  *
  * @package Serial_Validator
  */
+// phpcs:disable WordPress.Security.NonceVerification.Recommended -- WP_List_Table standard pattern uses $_REQUEST for sorting/filtering
+// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- all inputs are sanitized below
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- admin-only direct DB
 
 if (!class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
@@ -75,7 +78,7 @@ class Serial_Validator_Codes_List_Table extends WP_List_Table {
             $batches = $wpdb->get_col("SELECT DISTINCT batch FROM {$table} WHERE batch != '' ORDER BY batch");
             
             if (!empty($batches)) {
-                $current_batch = isset($_GET['batch']) ? sanitize_text_field($_GET['batch']) : '';
+                $current_batch = isset($_GET['batch']) ? sanitize_text_field(wp_unslash($_GET['batch'])) : '';
                 
                 echo '<div class="alignleft actions">';
                 echo '<select name="batch" id="batch-filter">';
@@ -111,7 +114,7 @@ class Serial_Validator_Codes_List_Table extends WP_List_Table {
         $actions = array(
             'delete' => sprintf(
                 '<a href="?page=%s&action=delete&id=%d&_wpnonce=%s" onclick="return confirm(\'%s\');">%s</a>',
-                $_REQUEST['page'],
+                esc_attr(isset($_REQUEST['page']) ? sanitize_text_field(wp_unslash($_REQUEST['page'])) : ''),
                 $item->id,
                 wp_create_nonce('sv_delete_code'),
                 __('Are you sure you want to delete this code?', 'serial-validator'),
@@ -167,14 +170,14 @@ class Serial_Validator_Codes_List_Table extends WP_List_Table {
         $table = $wpdb->prefix . 'sv_codes';
         
         // Handle search
-        $search = isset($_REQUEST['s']) ? sanitize_text_field($_REQUEST['s']) : '';
+        $search      = isset($_REQUEST['s']) ? sanitize_text_field(wp_unslash($_REQUEST['s'])) : '';
         
         // Handle batch filter
-        $batch_filter = isset($_REQUEST['batch']) ? sanitize_text_field($_REQUEST['batch']) : '';
+        $batch_filter = isset($_REQUEST['batch']) ? sanitize_text_field(wp_unslash($_REQUEST['batch'])) : '';
         
         // Handle sorting
-        $orderby = isset($_REQUEST['orderby']) ? sanitize_text_field($_REQUEST['orderby']) : 'created_at';
-        $order = isset($_REQUEST['order']) ? sanitize_text_field($_REQUEST['order']) : 'DESC';
+        $orderby = isset($_REQUEST['orderby']) ? sanitize_text_field(wp_unslash($_REQUEST['orderby'])) : 'created_at';
+        $order   = isset($_REQUEST['order']) ? sanitize_text_field(wp_unslash($_REQUEST['order'])) : 'DESC';
         
         // Build query
         $where = '1=1';

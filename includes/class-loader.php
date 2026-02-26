@@ -5,6 +5,8 @@
  * @package Serial_Validator
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 class Serial_Validator_Loader {
 
     /**

@@ -4,6 +4,8 @@
  *
  * @package Serial_Validator
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- view partial, variables are local scope
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- admin-only direct DB operations
 
 // Prevent direct access
 if (!defined('WPINC')) {

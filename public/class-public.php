@@ -44,7 +44,7 @@ class Serial_Validator_Public {
                 'google-recaptcha',
                 'https://www.google.com/recaptcha/api.js',
                 array(),
-                null,
+                null, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- external CDN, versioned by Google
                 true
             );
         }

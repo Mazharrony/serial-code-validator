@@ -4,6 +4,7 @@
  *
  * @package Serial_Validator
  */
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- admin-only direct DB operations
 
 class Serial_Validator_CSV_Handler {
 

@@ -2,6 +2,7 @@
 /**
  * Admin view for bulk code generation.
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- view partial, variables are local scope
 
 // Exit if accessed directly
 if (!defined('ABSPATH')) {

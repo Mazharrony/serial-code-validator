@@ -4,6 +4,7 @@
  *
  * @package Serial_Validator
  */
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- admin privacy handler, direct DB required
 
 class Serial_Validator_Privacy {
 

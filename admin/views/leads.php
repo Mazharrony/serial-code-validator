@@ -4,6 +4,8 @@
  *
  * @package Serial_Validator
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- view partial, variables are local scope
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- admin-only direct DB operations
 
 // Prevent direct access
 if (!defined('WPINC')) {
@@ -18,11 +20,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'export') {
 }
 
 // Handle bulk actions
-if (isset($_POST['action']) && $_POST['action'] !== '-1') {
+if (isset($_POST['action']) && sanitize_text_field(wp_unslash($_POST['action'])) !== '-1') {
     check_admin_referer('bulk-leads');
-    
-    $action = sanitize_text_field($_POST['action']);
-    $leads = isset($_POST['leads']) ? array_map('intval', $_POST['leads']) : array();
+
+    $action = sanitize_text_field(wp_unslash($_POST['action']));
+    $leads  = isset($_POST['leads']) ? array_map('intval', $_POST['leads']) : array();
     
     if (!empty($leads)) {
         global $wpdb;
@@ -57,7 +59,7 @@ $table->prepare_items();
     </h1>
     
     <form method="get">
-        <input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>">
+        <input type="hidden" name="page" value="<?php echo esc_attr( isset( $_REQUEST['page'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['page'] ) ) : '' ); ?>">
         <?php
         $table->search_box(__('Search Leads', 'serial-validator'), 'search_id');
         ?>

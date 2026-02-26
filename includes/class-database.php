@@ -79,7 +79,7 @@ class Serial_Validator_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'sv_codes';
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
         return $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM {$table} WHERE LOWER(code) = LOWER(%s)",
             $code
@@ -93,7 +93,7 @@ class Serial_Validator_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'sv_verifications';
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
         $count = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE LOWER(code) = LOWER(%s) AND verification_status = 'valid'",
             $code
@@ -109,7 +109,7 @@ class Serial_Validator_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'sv_verifications';
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
         return $wpdb->get_var($wpdb->prepare(
             "SELECT created_at FROM {$table} WHERE LOWER(code) = LOWER(%s) AND verification_status = 'valid' ORDER BY created_at ASC LIMIT 1",
             $code
@@ -147,35 +147,35 @@ class Serial_Validator_Database {
         $stats = array();
 
         // Total verifications.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
         $stats['total'] = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE created_at >= %s",
             $date_from
         ));
 
         // Valid codes.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
         $stats['valid'] = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE verification_status = 'valid' AND created_at >= %s",
             $date_from
         ));
 
         // Invalid attempts.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
         $stats['invalid'] = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE verification_status = 'invalid' AND created_at >= %s",
             $date_from
         ));
 
         // Already used.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
         $stats['used'] = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE verification_status = 'used' AND created_at >= %s",
             $date_from
         ));
 
         // Blocked.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
         $stats['blocked'] = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE verification_status = 'blocked' AND created_at >= %s",
             $date_from
@@ -192,7 +192,7 @@ class Serial_Validator_Database {
         $table = $wpdb->prefix . 'sv_verifications';
         $date_from = gmdate('Y-m-d', strtotime("-{$days} days"));
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
         return $wpdb->get_results($wpdb->prepare(
             "SELECT DATE(created_at) as date, COUNT(*) as count
             FROM {$table}
