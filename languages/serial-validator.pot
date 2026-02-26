@@ -1,0 +1,35 @@
+# Serial Validator Translation Template
+# Copyright (C) 2026
+# This file is distributed under the same license as the Serial Validator plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Serial Validator 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-25 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# To generate this file, use WP-CLI:
+# wp i18n make-pot . languages/serial-validator.pot
+
+# Or use Poedit to scan the plugin files
+
+# Note: This is a template file. 
+# To create actual translations:
+# 1. Copy this file to languages/serial-validator-{locale}.po
+# 2. Translate the msgstr strings
+# 3. Compile to .mo file using Poedit or msgfmt
+
+# Example locales:
+# - de_DE (German)
+# - fr_FR (French)
+# - es_ES (Spanish)
+# - it_IT (Italian)
+# - pt_BR (Portuguese Brazil)
+# - ja (Japanese)
+# - zh_CN (Chinese Simplified)

@@ -1,0 +1,186 @@
+/* Serial Validator - Public Styles */
+
+.sv-verification-form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.sv-verification-form {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.sv-form-field {
+    margin-bottom: 20px;
+}
+
+.sv-form-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.sv-required {
+    color: #d63638;
+}
+
+.sv-form-field input[type="text"],
+.sv-form-field input[type="email"],
+.sv-form-field input[type="tel"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.sv-form-field input:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.sv-submit-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: #2271b1;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.sv-submit-btn:hover {
+    background: #135e96;
+}
+
+.sv-submit-btn:disabled {
+    background: #a7aaad;
+    cursor: not-allowed;
+}
+
+.sv-result {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 6px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sv-result.sv-success {
+    background: #d1f4e0;
+    border: 1px solid #00a32a;
+    color: #00a32a;
+}
+
+.sv-result.sv-error {
+    background: #fcf0f1;
+    border: 1px solid #d63638;
+    color: #d63638;
+}
+
+.sv-result.sv-warning {
+    background: #fff8e5;
+    border: 1px solid #dba617;
+    color: #996800;
+}
+
+.sv-result-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.sv-result-message {
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.sv-result-details {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sv-result-detail {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.sv-result-detail strong {
+    display: inline-block;
+    min-width: 120px;
+    font-weight: 600;
+}
+
+.sv-loading {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.sv-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #2271b1;
+    animation: spin 0.8s linear infinite;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* reCAPTCHA container */
+.g-recaptcha {
+    margin: 10px 0;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .sv-verification-form-wrapper {
+        padding: 10px;
+    }
+    
+    .sv-verification-form {
+        padding: 20px;
+    }
+    
+    .sv-form-field input[type="text"],
+    .sv-form-field input[type="email"],
+    .sv-form-field input[type="tel"] {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+/* Hide form when result is shown */
+.sv-verification-form-wrapper.sv-result-shown .sv-verification-form {
+    display: none;
+}
