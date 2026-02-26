@@ -28,6 +28,7 @@ class Serial_Validator_CSV_Handler {
         }
         
         // Open file
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Reading uploaded CSV stream.
         $handle = fopen($file['tmp_name'], 'r');
         if ($handle === false) {
             return array(
@@ -48,6 +49,7 @@ class Serial_Validator_CSV_Handler {
         // Read header row
         $headers = fgetcsv($handle);
         if ($headers === false) {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Closing uploaded CSV stream.
             fclose($handle);
             return array(
                 'success' => false,
@@ -61,9 +63,11 @@ class Serial_Validator_CSV_Handler {
         
         foreach ($required_headers as $required) {
             if (!isset($header_map[$required])) {
+                // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Closing uploaded CSV stream.
                 fclose($handle);
                 return array(
                     'success' => false,
+                    /* translators: %s is the missing CSV column name. */
                     'message' => sprintf(__('Missing required column: %s', 'serial-validator'), $required)
                 );
             }
@@ -86,6 +90,7 @@ class Serial_Validator_CSV_Handler {
             
             // Validate required fields
             if (empty($data['code']) || empty($data['product_name'])) {
+                /* translators: %d is the CSV row number. */
                 $errors[] = sprintf(__('Row %d: Missing required fields', 'serial-validator'), $row_number);
                 $error_count++;
                 continue;
@@ -118,6 +123,7 @@ class Serial_Validator_CSV_Handler {
             $result = $wpdb->insert($table, $insert_data);
             
             if ($result === false) {
+                /* translators: %d is the CSV row number. */
                 $errors[] = sprintf(__('Row %d: Database error', 'serial-validator'), $row_number);
                 $error_count++;
             } else {
@@ -125,16 +131,20 @@ class Serial_Validator_CSV_Handler {
             }
         }
         
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Closing uploaded CSV stream.
         fclose($handle);
         
         // Build result message
+        /* translators: %d is number of imported codes. */
         $message = sprintf(__('Import completed: %d codes added', 'serial-validator'), $success_count);
         
         if ($duplicate_count > 0) {
+            /* translators: %d is number of duplicate rows skipped. */
             $message .= ', ' . sprintf(__('%d duplicates skipped', 'serial-validator'), $duplicate_count);
         }
         
         if ($error_count > 0) {
+            /* translators: %d is number of rows that failed import. */
             $message .= ', ' . sprintf(__('%d errors', 'serial-validator'), $error_count);
         }
         
@@ -158,16 +168,17 @@ class Serial_Validator_CSV_Handler {
         $codes = $wpdb->get_results("SELECT * FROM {$table} ORDER BY created_at DESC", ARRAY_A);
         
         if (empty($codes)) {
-            wp_die(__('No codes to export.', 'serial-validator'));
+            wp_die(esc_html__('No codes to export.', 'serial-validator'));
         }
         
         // Set headers
         header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="serial-codes-' . date('Y-m-d') . '.csv"');
+        header('Content-Disposition: attachment; filename="serial-codes-' . gmdate('Y-m-d') . '.csv"');
         header('Pragma: no-cache');
         header('Expires: 0');
         
         // Open output stream
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Writing CSV to output stream.
         $output = fopen('php://output', 'w');
         
         // Write BOM for UTF-8
@@ -181,6 +192,7 @@ class Serial_Validator_CSV_Handler {
             fputcsv($output, $code);
         }
         
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Closing output stream.
         fclose($output);
         exit;
     }
@@ -200,16 +212,17 @@ class Serial_Validator_CSV_Handler {
         }
         
         if (empty($leads)) {
-            wp_die(__('No leads to export.', 'serial-validator'));
+            wp_die(esc_html__('No leads to export.', 'serial-validator'));
         }
         
         // Set headers
         header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="serial-leads-' . date('Y-m-d') . '.csv"');
+        header('Content-Disposition: attachment; filename="serial-leads-' . gmdate('Y-m-d') . '.csv"');
         header('Pragma: no-cache');
         header('Expires: 0');
         
         // Open output stream
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Writing CSV to output stream.
         $output = fopen('php://output', 'w');
         
         // Write BOM for UTF-8
@@ -230,6 +243,7 @@ class Serial_Validator_CSV_Handler {
             ));
         }
         
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Closing output stream.
         fclose($output);
         exit;
     }
@@ -330,6 +344,7 @@ class Serial_Validator_CSV_Handler {
         
         return array(
             'success' => true,
+            /* translators: %d is number of successfully generated codes. */
             'message' => sprintf(__('Successfully generated %d codes.', 'serial-validator'), $success_count),
             'success_count' => $success_count,
             'duplicate_count' => $duplicate_count,
@@ -378,16 +393,17 @@ class Serial_Validator_CSV_Handler {
      */
     public static function download_generated_codes($codes) {
         if (empty($codes)) {
-            wp_die(__('No codes to download.', 'serial-validator'));
+            wp_die(esc_html__('No codes to download.', 'serial-validator'));
         }
         
         // Set headers
         header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="generated-codes-' . date('Y-m-d-His') . '.csv"');
+        header('Content-Disposition: attachment; filename="generated-codes-' . gmdate('Y-m-d-His') . '.csv"');
         header('Pragma: no-cache');
         header('Expires: 0');
         
         // Open output stream
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Writing CSV to output stream.
         $output = fopen('php://output', 'w');
         
         // Write BOM for UTF-8
@@ -409,6 +425,7 @@ class Serial_Validator_CSV_Handler {
             ));
         }
         
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Closing output stream.
         fclose($output);
         exit;
     }

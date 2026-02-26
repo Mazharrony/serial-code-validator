@@ -24,7 +24,6 @@ class Serial_Validator {
         $this->version = SERIAL_VALIDATOR_VERSION;
         
         $this->load_dependencies();
-        $this->set_locale();
         $this->define_admin_hooks();
         $this->define_public_hooks();
     }
@@ -43,13 +42,6 @@ class Serial_Validator {
         require_once SERIAL_VALIDATOR_PLUGIN_DIR . 'public/class-public.php';
         
         $this->loader = new Serial_Validator_Loader();
-    }
-
-    /**
-     * Load plugin text domain for internationalization.
-     */
-    private function set_locale() {
-        $this->loader->add_action('plugins_loaded', $this, 'load_plugin_textdomain');
     }
 
     /**
@@ -113,14 +105,4 @@ class Serial_Validator {
         $this->loader->run();
     }
     
-    /**
-     * Load plugin text domain.
-     */
-    public function load_plugin_textdomain() {
-        load_plugin_textdomain(
-            'serial-validator',
-            false,
-            dirname(SERIAL_VALIDATOR_PLUGIN_BASENAME) . '/languages/'
-        );
-    }
 }

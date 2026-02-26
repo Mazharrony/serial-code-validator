@@ -12,7 +12,8 @@ class Serial_Validator_Ajax_Handler {
      */
     public function verify_code() {
         // Verify nonce.
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'sv_verify_nonce')) {
+        $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+        if (empty($nonce) || !wp_verify_nonce($nonce, 'sv_verify_nonce')) {
             wp_send_json_error(array('message' => __('Security check failed.', 'serial-validator')));
         }
         
@@ -25,7 +26,7 @@ class Serial_Validator_Ajax_Handler {
                 wp_send_json_error(array('message' => __('Please complete the reCAPTCHA.', 'serial-validator')));
             }
             
-            $recaptcha_response = sanitize_text_field($_POST['recaptcha_response']);
+            $recaptcha_response = sanitize_text_field(wp_unslash($_POST['recaptcha_response']));
             $verify_url = 'https://www.google.com/recaptcha/api/siteverify';
             
             $response = wp_remote_post($verify_url, array(
@@ -66,10 +67,10 @@ class Serial_Validator_Ajax_Handler {
         }
         
         // Sanitize and validate input.
-        $code = isset($_POST['code']) ? sanitize_text_field($_POST['code']) : '';
-        $name = isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '';
-        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
-        $phone = isset($_POST['phone']) ? sanitize_text_field($_POST['phone']) : '';
+        $code = isset($_POST['code']) ? sanitize_text_field(wp_unslash($_POST['code'])) : '';
+        $name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
+        $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
+        $phone = isset($_POST['phone']) ? sanitize_text_field(wp_unslash($_POST['phone'])) : '';
         
         if (empty($code)) {
             wp_send_json_error(array('message' => __('Please enter a serial code.', 'serial-validator')));
@@ -205,12 +206,14 @@ class Serial_Validator_Ajax_Handler {
                 // Use first verification date for warranty calculation.
                 $first_verification = Serial_Validator_Database::get_first_verification_date($code);
                 if ($first_verification) {
-                    $warranty_expiry = date('Y-m-d', strtotime($first_verification . ' + ' . $code_data->warranty_months . ' months'));
+                    $warranty_expiry = gmdate('Y-m-d', strtotime($first_verification . ' + ' . $code_data->warranty_months . ' months'));
+                    /* translators: %s is a formatted date. */
                     $warranty_info = sprintf(__('Warranty valid until: %s', 'serial-validator'), date_i18n(get_option('date_format'), strtotime($warranty_expiry)));
                 }
             } else {
                 // This is first verification, warranty starts now.
-                $warranty_expiry = date('Y-m-d', strtotime('+ ' . $code_data->warranty_months . ' months'));
+                $warranty_expiry = gmdate('Y-m-d', strtotime('+ ' . $code_data->warranty_months . ' months'));
+                /* translators: %d is the number of warranty months. */
                 $warranty_info = sprintf(__('Warranty valid for %d months', 'serial-validator'), $code_data->warranty_months);
             }
         }
@@ -266,20 +269,20 @@ class Serial_Validator_Ajax_Handler {
         $ip = '';
         
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
+            $ip = sanitize_text_field(wp_unslash($_SERVER['HTTP_CLIENT_IP']));
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            $ip = sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR']));
         } else {
-            $ip = $_SERVER['REMOTE_ADDR'];
+            $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
         }
         
-        return sanitize_text_field($ip);
+        return $ip;
     }
     
     /**
      * Get user agent.
      */
     private function get_user_agent() {
-        return isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field($_SERVER['HTTP_USER_AGENT']) : '';
+        return isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
     }
 }

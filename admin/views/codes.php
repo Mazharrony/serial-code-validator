@@ -13,9 +13,11 @@ if (!defined('WPINC')) {
 // Handle bulk actions
 if (isset($_POST['action']) && $_POST['action'] !== '-1') {
     check_admin_referer('bulk-codes');
+
+    $sv_post = wp_unslash($_POST);
     
-    $action = sanitize_text_field($_POST['action']);
-    $codes = isset($_POST['codes']) ? array_map('intval', $_POST['codes']) : array();
+    $action = isset($sv_post['action']) ? sanitize_text_field($sv_post['action']) : '';
+    $codes = isset($sv_post['codes']) && is_array($sv_post['codes']) ? array_map('intval', $sv_post['codes']) : array();
     
     if (!empty($codes)) {
         global $wpdb;
@@ -41,6 +43,7 @@ if (isset($_POST['action']) && $_POST['action'] !== '-1') {
                 if (!empty($batches)) {
                     $batch_placeholders = implode(',', array_fill(0, count($batches), '%s'));
                     $wpdb->query($wpdb->prepare("UPDATE {$table} SET status = 'blocked' WHERE batch IN ({$batch_placeholders})", $batches));
+                    /* translators: %d is number of affected batches. */
                     echo '<div class="notice notice-success"><p>' . sprintf(esc_html__('All codes in %d batch(es) have been blocked.', 'serial-validator'), count($batches)) . '</p></div>';
                 } else {
                     echo '<div class="notice notice-warning"><p>' . esc_html__('Selected codes have no batch assigned.', 'serial-validator') . '</p></div>';
@@ -52,7 +55,8 @@ if (isset($_POST['action']) && $_POST['action'] !== '-1') {
                 if (!empty($batches)) {
                     $batch_placeholders = implode(',', array_fill(0, count($batches), '%s'));
                     $affected = $wpdb->query($wpdb->prepare("DELETE FROM {$table} WHERE batch IN ({$batch_placeholders})", $batches));
-                    echo '<div class="notice notice-success"><p>' . sprintf(esc_html__('Deleted %d codes from %d batch(es).', 'serial-validator'), $affected, count($batches)) . '</p></div>';
+                    /* translators: 1: number of deleted codes, 2: number of affected batches. */
+                    echo '<div class="notice notice-success"><p>' . sprintf(esc_html__('Deleted %1$d codes from %2$d batch(es).', 'serial-validator'), (int) $affected, count($batches)) . '</p></div>';
                 } else {
                     echo '<div class="notice notice-warning"><p>' . esc_html__('Selected codes have no batch assigned.', 'serial-validator') . '</p></div>';
                 }
@@ -62,12 +66,12 @@ if (isset($_POST['action']) && $_POST['action'] !== '-1') {
 }
 
 // Handle single delete
-if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
+if (isset($_GET['action']) && 'delete' === sanitize_text_field(wp_unslash($_GET['action'])) && isset($_GET['id'])) {
     check_admin_referer('sv_delete_code');
     
     global $wpdb;
     $table = $wpdb->prefix . 'sv_codes';
-    $id = intval($_GET['id']);
+    $id = intval(wp_unslash($_GET['id']));
     
     $wpdb->delete($table, array('id' => $id));
     echo '<div class="notice notice-success"><p>' . esc_html__('Code deleted.', 'serial-validator') . '</p></div>';
@@ -76,17 +80,19 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
 // Handle add new code
 if (isset($_POST['add_code'])) {
     check_admin_referer('sv_add_code');
+
+    $sv_post = wp_unslash($_POST);
     
     global $wpdb;
     $table = $wpdb->prefix . 'sv_codes';
     
     $wpdb->insert($table, array(
-        'code' => sanitize_text_field($_POST['code']),
-        'product_name' => sanitize_text_field($_POST['product_name']),
-        'batch' => sanitize_text_field($_POST['batch']),
-        'expiry_date' => !empty($_POST['expiry_date']) ? sanitize_text_field($_POST['expiry_date']) : null,
-        'warranty_months' => !empty($_POST['warranty_months']) ? intval($_POST['warranty_months']) : null,
-        'status' => sanitize_text_field($_POST['status']),
+        'code' => isset($_POST['code']) ? sanitize_text_field(wp_unslash($_POST['code'])) : '',
+        'product_name' => isset($_POST['product_name']) ? sanitize_text_field(wp_unslash($_POST['product_name'])) : '',
+        'batch' => isset($_POST['batch']) ? sanitize_text_field(wp_unslash($_POST['batch'])) : '',
+        'expiry_date' => !empty($_POST['expiry_date']) ? sanitize_text_field(wp_unslash($_POST['expiry_date'])) : null,
+        'warranty_months' => !empty($sv_post['warranty_months']) ? intval($sv_post['warranty_months']) : null,
+        'status' => isset($_POST['status']) ? sanitize_text_field(wp_unslash($_POST['status'])) : 'active',
         'one_time_use' => isset($_POST['one_time_use']) ? 1 : 0,
         'created_at' => current_time('mysql')
     ));
@@ -150,7 +156,7 @@ $table->prepare_items();
     <hr>
     
     <form method="get">
-        <input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>">
+        <input type="hidden" name="page" value="<?php echo isset($_REQUEST['page']) ? esc_attr(sanitize_text_field(wp_unslash($_REQUEST['page']))) : ''; ?>">
         <?php
         $table->search_box(__('Search Codes', 'serial-validator'), 'search_id');
         ?>

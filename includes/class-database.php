@@ -78,7 +78,8 @@ class Serial_Validator_Database {
     public static function get_code($code) {
         global $wpdb;
         $table = $wpdb->prefix . 'sv_codes';
-        
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         return $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM {$table} WHERE LOWER(code) = LOWER(%s)",
             $code
@@ -91,12 +92,13 @@ class Serial_Validator_Database {
     public static function is_code_verified($code) {
         global $wpdb;
         $table = $wpdb->prefix . 'sv_verifications';
-        
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $count = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE LOWER(code) = LOWER(%s) AND verification_status = 'valid'",
             $code
         ));
-        
+
         return $count > 0;
     }
     
@@ -106,7 +108,8 @@ class Serial_Validator_Database {
     public static function get_first_verification_date($code) {
         global $wpdb;
         $table = $wpdb->prefix . 'sv_verifications';
-        
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         return $wpdb->get_var($wpdb->prepare(
             "SELECT created_at FROM {$table} WHERE LOWER(code) = LOWER(%s) AND verification_status = 'valid' ORDER BY created_at ASC LIMIT 1",
             $code
@@ -139,40 +142,45 @@ class Serial_Validator_Database {
     public static function get_stats($days = 7) {
         global $wpdb;
         $table = $wpdb->prefix . 'sv_verifications';
-        $date_from = date('Y-m-d H:i:s', strtotime("-{$days} days"));
-        
+        $date_from = gmdate('Y-m-d H:i:s', strtotime("-{$days} days"));
+
         $stats = array();
-        
+
         // Total verifications.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $stats['total'] = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE created_at >= %s",
             $date_from
         ));
-        
+
         // Valid codes.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $stats['valid'] = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE verification_status = 'valid' AND created_at >= %s",
             $date_from
         ));
-        
+
         // Invalid attempts.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $stats['invalid'] = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE verification_status = 'invalid' AND created_at >= %s",
             $date_from
         ));
-        
+
         // Already used.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $stats['used'] = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE verification_status = 'used' AND created_at >= %s",
             $date_from
         ));
-        
+
         // Blocked.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $stats['blocked'] = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE verification_status = 'blocked' AND created_at >= %s",
             $date_from
         ));
-        
+
         return $stats;
     }
     
@@ -182,13 +190,14 @@ class Serial_Validator_Database {
     public static function get_daily_counts($days = 7) {
         global $wpdb;
         $table = $wpdb->prefix . 'sv_verifications';
-        $date_from = date('Y-m-d', strtotime("-{$days} days"));
-        
+        $date_from = gmdate('Y-m-d', strtotime("-{$days} days"));
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         return $wpdb->get_results($wpdb->prepare(
-            "SELECT DATE(created_at) as date, COUNT(*) as count 
-            FROM {$table} 
-            WHERE DATE(created_at) >= %s 
-            GROUP BY DATE(created_at) 
+            "SELECT DATE(created_at) as date, COUNT(*) as count
+            FROM {$table}
+            WHERE DATE(created_at) >= %s
+            GROUP BY DATE(created_at)
             ORDER BY date ASC",
             $date_from
         ));
