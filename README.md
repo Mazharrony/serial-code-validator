@@ -14,8 +14,8 @@ A clean, professional WordPress plugin for verifying product serial codes with l
 - 📊 **Dashboard** - Visual statistics and verification trends
 - 📦 **Code Management** - Add, edit, activate, block, or delete codes
 - 🎲 **Bulk Code Generator** - Generate thousands of unique codes with custom formats
-- � **Batch Management** - Filter by batch, bulk block or delete entire batches
-- �📥 **CSV Import/Export** - Bulk import codes or export data
+- 🗂️ **Batch Management** - Filter by batch, bulk block or delete entire batches
+- 📥 **CSV Import/Export** - Bulk import codes or export data
 - 👥 **Lead Management** - Collect customer information, filter and export
 - ⚙️ **Settings** - Customize form fields, messages, and security options
 
