@@ -264,19 +264,16 @@ class Serial_Validator_Ajax_Handler {
     
     /**
      * Get client IP address.
+     *
+     * Uses REMOTE_ADDR only. Client-IP and X-Forwarded-For are sent by the visitor, so trusting
+     * them would let anyone reset the rate limit by changing a header. Sites behind a trusted
+     * proxy or CDN can return the real address with the serial_validator_client_ip filter.
      */
     private function get_client_ip() {
-        $ip = '';
+        $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+        $ip = apply_filters('serial_validator_client_ip', $ip);
         
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = sanitize_text_field(wp_unslash($_SERVER['HTTP_CLIENT_IP']));
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR']));
-        } else {
-            $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
-        }
-        
-        return $ip;
+        return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : '';
     }
     
     /**
