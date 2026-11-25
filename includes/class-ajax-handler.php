@@ -149,7 +149,9 @@ class Serial_Validator_Ajax_Handler {
         // Check expiry date.
         if (!empty($code_data->expiry_date)) {
             $expiry = strtotime($code_data->expiry_date);
-            if ($expiry !== false && $expiry < time()) {
+            // Expiry is a date with no time: the code stays valid through that whole day in the
+            // site's timezone, so compare calendar dates rather than timestamps.
+            if ($expiry !== false && gmdate('Y-m-d', $expiry) < current_time('Y-m-d')) {
                 $verification_status = 'invalid';
                 $message = __('This code has expired.', 'serial-validator');
                 
